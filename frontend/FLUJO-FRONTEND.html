@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<title>Flujo de la información en el frontend</title>
+<style>
+  @page { size: A4; margin: 13mm 12mm; }
+
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  :root {
+    --verde: #2e7d32;
+    --verde-card: #318335;
+    --verde-suave: #e8f5e9;
+    --verde-borde: #c8e6c9;
+    --texto: #212121;
+    --secundario: #616161;
+    --borde: #e0e0e0;
+    --codigo: #f1f3f5;
+  }
+
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    color: var(--texto);
+    font-size: 10pt;
+    line-height: 1.38;
+  }
+
+  .pagina { page-break-after: always; }
+  .pagina:last-child { page-break-after: auto; }
+
+  code, .mono { font-family: Consolas, "Courier New", monospace; }
+
+  /* ---------- Encabezado de pagina ---------- */
+  .cab { margin-bottom: 11px; }
+  .cab h2 {
+    font-size: 17.5pt; font-weight: 700; margin: 0; line-height: 1.15;
+  }
+  .cab .sub { color: var(--secundario); font-size: 10pt; margin-top: 3px; }
+  .cab hr { width: 83%; height: 2px; border: 0; background: var(--verde); margin: 7px 0 0; }
+
+  .paso-num {
+    display: inline-block; background: var(--verde); color: #fff;
+    font-size: 9pt; font-weight: 700; padding: 1px 8px; border-radius: 20px;
+    letter-spacing: .4px;
+  }
+
+  /* ---------- Portada ---------- */
+  .portada { text-align: center; padding-top: 45mm; }
+  .portada .logo {
+    width: 74px; height: 74px; border-radius: 18px; background: var(--verde);
+    display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px;
+  }
+  .portada .logo span { color: #fff; font-size: 34px; font-weight: 700; }
+  .portada h1 { font-size: 27pt; margin: 0 0 6px; line-height: 1.15; }
+  .portada .lead { color: var(--secundario); font-size: 12pt; max-width: 135mm; margin: 0 auto; }
+  .portada .meta {
+    margin-top: 26px; font-size: 9.5pt; color: var(--secundario);
+    border-top: 1px solid var(--borde); padding-top: 12px; display: inline-block;
+  }
+  .aviso {
+    margin: 30px auto 0; max-width: 140mm; background: var(--verde-suave);
+    border: 1px solid var(--verde-borde); border-left: 4px solid var(--verde);
+    border-radius: 6px; padding: 9px 12px; font-size: 9.5pt; text-align: left;
+  }
+
+  /* ---------- Caja de archivo ---------- */
+  .caja {
+    border: 1.5px solid var(--verde-borde); border-radius: 8px; overflow: hidden;
+    background: #fff;
+  }
+  .caja > .titulo {
+    background: color-mix(in srgb, var(--verde) 10%, white);
+    border-bottom: 2px solid var(--verde);
+    color: var(--verde); font-weight: 800; font-size: 9pt;
+    text-transform: uppercase; letter-spacing: .8px; padding: 5px 11px;
+  }
+  .caja > .cuerpo { padding: 7px 10px; }
+
+  .archivo { font-family: Consolas, monospace; font-weight: 700; font-size: 10pt; }
+  .nota { color: var(--secundario); font-size: 9.5pt; margin-top: 2px; }
+
+  /* ---------- Flecha ---------- */
+  .flecha { text-align: center; color: var(--verde); font-size: 13pt; line-height: 1; margin: 3px 0; }
+  .flecha small { display: block; font-size: 8.5pt; color: var(--secundario); margin-top: 1px; font-family: Consolas, monospace; }
+
+  /* ---------- Paso del flujo ---------- */
+  .paso { display: flex; gap: 11px; align-items: stretch; }
+  .paso .marca {
+    flex: 0 0 26px; display: flex; flex-direction: column; align-items: center;
+  }
+  .paso .bolita {
+    width: 24px; height: 24px; border-radius: 50%; background: var(--verde);
+    color: #fff; font-size: 10pt; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; flex: 0 0 24px;
+  }
+  .paso .linea { flex: 1; width: 2px; background: var(--verde-borde); margin: 3px 0; }
+  .paso .contenido { flex: 1; padding-bottom: 8px; }
+  .paso .contenido .qué { font-weight: 700; font-size: 10pt; }
+  .paso .contenido .donde {
+    font-family: Consolas, monospace; font-size: 9pt; color: var(--verde);
+    background: var(--verde-suave); border-radius: 4px; padding: 1px 6px;
+    display: inline-block; margin-top: 2px;
+  }
+  .paso .contenido p { margin: 4px 0 0; color: #333; }
+  .paso .contenido pre {
+    margin: 5px 0 0; background: var(--codigo); border-radius: 5px;
+    padding: 6px 8px; font-size: 8.4pt; line-height: 1.35; overflow: hidden;
+    border-left: 3px solid var(--verde-borde);
+  }
+
+  /* ---------- Utilidades ---------- */
+  .fila { display: flex; gap: 10px; }
+  .col { flex: 1; }
+  .mt { margin-top: 10px; }
+  .mt2 { margin-top: 13px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 9pt; margin-top: 6px; }
+  th { background: var(--verde); color: #fff; text-align: left; padding: 6px 9px; font-size: 9pt; }
+  td { border: 1px solid var(--verde-borde); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f9fbe7; }
+
+  .pill {
+    display: inline-block; background: var(--verde-suave); color: var(--verde);
+    border: 1px solid var(--verde-borde); border-radius: 20px;
+    padding: 1px 9px; font-size: 8.5pt; font-weight: 700; font-family: Consolas, monospace;
+  }
+  .pie { position: fixed; bottom: 4mm; left: 0; right: 0; text-align: center;
+         font-size: 8pt; color: #9e9e9e; }
+</style>
+</head>
+<body>
+
+<!-- ============================ PORTADA ============================ -->
+<section class="pagina portada">
+  <div class="logo"><span>&#9776;</span></div>
+  <h1>Cómo viaja la información<br />en el frontend</h1>
+  <p class="lead">
+    Vue 3 + Quasar + Vue Router + Pinia. El recorrido de un dato desde que el
+    usuario lo escribe hasta que vuelve pintado en pantalla.
+  </p>
+
+  <div class="aviso">
+    <strong>Alcance:</strong> este documento cubre <strong>solo el frontend</strong>.
+    Donde aparece el servidor se dibuja como una nube gris, sin entrar en cómo
+    funciona por dentro. Lo único que hay que saber de él es que recibe JSON y
+    responde JSON.
+  </div>
+
+  <div class="meta">
+    Proyecto <strong>estructura_frontend</strong> &nbsp;·&nbsp; material de clase
+  </div>
+</section>
+
+<!-- ============================ MAPA ============================ -->
+<section class="pagina">
+  <div class="cab">
+    <h2>El mapa de capas</h2>
+    <div class="sub">Quién habla con quién. Ninguna capa se salta a la siguiente.</div>
+    <hr />
+  </div>
+
+  <div class="caja">
+    <div class="titulo">Lo que ve el usuario</div>
+    <div class="cuerpo">
+      <span class="archivo">/views</span> &nbsp;+&nbsp; <span class="archivo">/components</span> &nbsp;+&nbsp; <span class="archivo">/layouts</span>
+      <div class="nota">La vista es la dueña de la pantalla. Los componentes se dejan usar por cualquiera; el layout pone la barra y el menú.</div>
+    </div>
+  </div>
+  <div class="flecha">&#9660;<small>llama a una función</small></div>
+
+  <div class="caja">
+    <div class="titulo">La capa que sabe hablar con el servidor</div>
+    <div class="cuerpo">
+      <span class="archivo">/services/api.service.js</span>
+      <div class="nota">Cuatro funciones sueltas: <code>get</code>, <code>post</code>, <code>put</code>, <code>del</code>. Reciben la URL y devuelven el dato.</div>
+    </div>
+  </div>
+  <div class="flecha">&#9660;<small>usa la instancia configurada</small></div>
+
+  <div class="caja">
+    <div class="titulo">La configuración, en un solo sitio</div>
+    <div class="cuerpo">
+      <span class="archivo">/plugins/axios.js</span>
+      <div class="nota">Pone la URL base, agrega el token a cada petición y ordena los errores antes de devolverlos.</div>
+    </div>
+  </div>
+  <div class="flecha">&#9660;<small>HTTP + JSON</small></div>
+
+  <div class="caja" style="border-color:#bdbdbd; background:#fafafa;">
+    <div class="titulo" style="background:#eeeeee; border-bottom-color:#bdbdbd; color:#616161;">Fuera del frontend</div>
+    <div class="cuerpo">
+      <span class="archivo" style="color:#616161;">Servidor</span>
+      <div class="nota">Recibe JSON, responde JSON. Aquí no nos importa cómo.</div>
+    </div>
+  </div>
+
+  <div class="mt2 fila">
+    <div class="col caja">
+      <div class="titulo">A un lado: memoria</div>
+      <div class="cuerpo">
+        <span class="archivo">/store</span>
+        <div class="nota">Lo que comparten varias pantallas: la sesión y los datos generales de la app.</div>
+      </div>
+    </div>
+    <div class="col caja">
+      <div class="titulo">A un lado: navegación</div>
+      <div class="cuerpo">
+        <span class="archivo">/router</span>
+        <div class="nota">Decide qué vista se pinta y quién tiene permiso de entrar.</div>
+      </div>
+    </div>
+    <div class="col caja">
+      <div class="titulo">A un lado: herramientas</div>
+      <div class="cuerpo">
+        <span class="archivo">/utils</span> · <span class="archivo">/composables</span>
+        <div class="nota">Reglas de validación, formato de fechas, avisos y confirmaciones.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="aviso mt2" style="margin-left:0; max-width:none;">
+    <strong>La regla de oro:</strong> ningún componente llama a <code>axios</code> directamente.
+    Si mañana cambia la dirección del servidor, se corrige <em>un</em> archivo y ninguna pantalla se entera.
+  </div>
+</section>
+
+<!-- ============================ ARRANQUE ============================ -->
+<section class="pagina">
+  <div class="cab">
+    <h2>1. Al abrir la aplicación</h2>
+    <div class="sub">Qué pasa entre que se carga la página y aparece la primera pantalla</div>
+    <hr />
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">1</div><div class="linea"></div></div>
+    <div class="contenido">
+      <div class="qué">El navegador carga una página vacía</div>
+      <span class="donde">index.html</span>
+      <p>Solo tiene un <code>&lt;div id="app"&gt;&lt;/div&gt;</code>. Todo lo demás lo pinta Vue.</p>
+    </div>
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">2</div><div class="linea"></div></div>
+    <div class="contenido">
+      <div class="qué">Se arma la aplicación y se le instalan las piezas</div>
+      <span class="donde">main.js</span>
+      <p>Es el único archivo que junta todo. Si algo tiene que estar disponible en toda la app, se registra aquí.</p>
+      <pre>app.use(pinia)   // memoria compartida
+app.use(router)  // navegación
+instalarQuasar(app)  // interfaz
+app.mount("#app")</pre>
+    </div>
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">3</div><div class="linea"></div></div>
+    <div class="contenido">
+      <div class="qué">Pinia recupera la sesión guardada</div>
+      <span class="donde">store/Auth.js &rarr; localStorage</span>
+      <p>El store de sesión está marcado como <code>persist</code>, así que al arrancar se rellena solo con lo que quedó guardado en el navegador. Por eso al recargar con F5 uno sigue adentro.</p>
+    </div>
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">4</div><div class="linea"></div></div>
+    <div class="contenido">
+      <div class="qué">El router mira la dirección y decide</div>
+      <span class="donde">router/index.js</span>
+      <p>Antes de dejar entrar, revisa si la ruta pide sesión. Sin sesión, devuelve al login.</p>
+    </div>
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">5</div><div class="linea"></div></div>
+    <div class="contenido">
+      <div class="qué">Se pinta el marco y dentro la pantalla</div>
+      <span class="donde">App.vue &rarr; AdminLayout.vue &rarr; la vista</span>
+      <p><code>App.vue</code> está casi vacío a propósito: solo cede el paso. El layout pone la barra y el menú una sola vez, y las vistas se van cambiando dentro de él sin volver a montarlo.</p>
+    </div>
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">6</div></div>
+    <div class="contenido">
+      <div class="qué">La vista pide sus datos</div>
+      <span class="donde">onMounted()</span>
+      <p>Recién cuando ya está en pantalla. De ahí en adelante empieza el flujo de la página siguiente.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ LECTURA ============================ -->
+<section class="pagina">
+  <div class="cab">
+    <h2>2. Traer datos y mostrarlos</h2>
+    <div class="sub">Ejemplo: la lista de cursos. Es el flujo de <em>lectura</em>.</div>
+    <hr />
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">1</div><div class="linea"></div></div>
+    <div class="contenido">
+      <div class="qué">La vista prende el indicador de carga</div>
+      <span class="donde">CursosView.vue</span>
+      <pre>cargando.value = true;
+error.value = null;</pre>
+      <p>Siempre son <strong>tres estados</strong>: cargando, error y datos. Una pantalla que solo contempla el caso feliz está incompleta.</p>
+    </div>
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">2</div><div class="linea"></div></div>
+    <div class="contenido">
+      <div class="qué">Pide los datos por su nombre, sin saber cómo se piden</div>
+      <span class="donde">services/api.service.js</span>
+      <pre>cursos.value = await get("/cursos");</pre>
+      <p>La vista no sabe de <code>axios</code>, ni de cabeceras, ni de la dirección del servidor. Solo dice <em>qué</em> quiere.</p>
+    </div>
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">3</div><div class="linea"></div></div>
+    <div class="contenido">
+      <div class="qué">Se completa la petición y sale al servidor</div>
+      <span class="donde">plugins/axios.js</span>
+      <p>Aquí se le pega la dirección base y se le agrega el token de la sesión. Ninguna vista tiene que acordarse de eso.</p>
+    </div>
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">4</div><div class="linea"></div></div>
+    <div class="contenido">
+      <div class="qué">Vuelve la respuesta, ya desempacada</div>
+      <span class="donde">services/api.service.js</span>
+      <p>El servicio devuelve directamente el contenido, no el sobre completo que entrega axios. La vista recibe el arreglo listo para usar.</p>
+    </div>
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">5</div><div class="linea"></div></div>
+    <div class="contenido">
+      <div class="qué">El dato entra a una caja reactiva</div>
+      <span class="donde">const cursos = ref([])</span>
+      <p><strong>Este es el momento clave.</strong> Al asignar el valor, Vue se entera solo y vuelve a pintar lo que dependa de él. Nadie tiene que "refrescar" nada a mano.</p>
+    </div>
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">6</div><div class="linea"></div></div>
+    <div class="contenido">
+      <div class="qué">El dato baja al componente por props</div>
+      <span class="donde">TablaDatos.vue</span>
+      <pre>&lt;TablaDatos :filas="cursos" :columnas="columnas" :cargando="cargando" /&gt;</pre>
+      <p>La tabla no sabe qué está pintando: recibe filas y columnas y las muestra. Por eso la misma tabla sirve para cursos y para aprendices.</p>
+    </div>
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">7</div></div>
+    <div class="contenido">
+      <div class="qué">Se apaga el indicador, pase lo que pase</div>
+      <span class="donde">finally</span>
+      <p>Va en <code>finally</code> para que el spinner se apague igual si la petición falló. Si no, quedaría girando para siempre.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ ESCRITURA ============================ -->
+<section class="pagina">
+  <div class="cab">
+    <h2>3. Guardar lo que el usuario escribe</h2>
+    <div class="sub">Es el flujo de <em>escritura</em>, y va al revés: de la pantalla hacia afuera.</div>
+    <hr />
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">1</div><div class="linea"></div></div>
+    <div class="contenido">
+      <div class="qué">Cada tecla actualiza el objeto del formulario</div>
+      <span class="donde">v-model</span>
+      <pre>&lt;q-input v-model="formulario.codigo" /&gt;</pre>
+      <p>El enlace va en los dos sentidos: si el código cambia el valor, la pantalla también se actualiza sola.</p>
+    </div>
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">2</div><div class="linea"></div></div>
+    <div class="contenido">
+      <div class="qué">Al enviar, primero se revisan las reglas</div>
+      <span class="donde">utils/reglas.js</span>
+      <pre>:rules="[requerido('El codigo'), minimo(3, 'El codigo')]"</pre>
+      <p>Cada regla devuelve <code>true</code> o el texto del error. El formulario las ejecuta todas y <strong>solo si todas pasan</strong> continúa. Si alguna falla, marca el campo en rojo y no sale ninguna petición.</p>
+    </div>
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">3</div><div class="linea"></div></div>
+    <div class="contenido">
+      <div class="qué">Se arma el paquete de datos</div>
+      <p>Se limpia lo que sobra y se convierte lo que haga falta. Lo que solo servía para validar en pantalla (como confirmar la contraseña) no se envía.</p>
+    </div>
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">4</div><div class="linea"></div></div>
+    <div class="contenido">
+      <div class="qué">Sale por la misma capa de siempre</div>
+      <span class="donde">post(url, datos) &nbsp;/&nbsp; put(url, datos)</span>
+      <p>Crear y actualizar comparten el mismo formulario: la única diferencia es si se está editando algo o no.</p>
+    </div>
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">5</div><div class="linea"></div></div>
+    <div class="contenido">
+      <div class="qué">Se le avisa al usuario</div>
+      <span class="donde">composables/useNotificar.js</span>
+      <p>El mensaje que aparece en verde es el que devolvió el servidor, no uno inventado en el frontend.</p>
+    </div>
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">6</div></div>
+    <div class="contenido">
+      <div class="qué">Se cierra el formulario y se vuelve a pedir la lista</div>
+      <p>Se pide de nuevo en vez de "arreglar" la tabla a mano. Es una petición más, pero garantiza que lo que se ve es de verdad lo que quedó guardado.</p>
+    </div>
+  </div>
+
+  <div class="aviso mt" style="margin-left:0; max-width:none;">
+    <strong>Ojo:</strong> validar en el navegador es por comodidad, para responderle
+    rápido al usuario. El servidor <em>vuelve</em> a validar siempre, porque un
+    navegador se puede manipular.
+  </div>
+</section>
+
+<!-- ============================ SESION ============================ -->
+<section class="pagina">
+  <div class="cab">
+    <h2>4. El recorrido de la sesión</h2>
+    <div class="sub">Cómo se consigue el permiso de entrar y cómo viaja después</div>
+    <hr />
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">1</div><div class="linea"></div></div>
+    <div class="contenido">
+      <div class="qué">El usuario entra con su correo y su contraseña</div>
+      <span class="donde">LoginView.vue</span>
+      <p>Es la primera pantalla de la aplicación. Sin permiso no se puede ver nada más.</p>
+    </div>
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">2</div><div class="linea"></div></div>
+    <div class="contenido">
+      <div class="qué">El servidor devuelve un permiso y los datos del usuario</div>
+      <p>Ese permiso es un texto largo que sirve de credencial: quien lo tenga puede pedir información.</p>
+    </div>
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">3</div><div class="linea"></div></div>
+    <div class="contenido">
+      <div class="qué">Se guarda en la memoria compartida</div>
+      <span class="donde">store/Auth.js</span>
+      <p>Va al store y no a la vista, porque lo necesitan <strong>tres sitios que no se conocen entre sí</strong>: la capa que hace las peticiones, el router y la barra superior.</p>
+    </div>
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">4</div><div class="linea"></div></div>
+    <div class="contenido">
+      <div class="qué">Y de ahí, solo, al almacenamiento del navegador</div>
+      <span class="donde">pinia-plugin-persistedstate</span>
+      <p>No hay una sola línea escrita para guardarlo: el complemento lo hace por su cuenta. Eso es lo que permite recargar la página sin perder la sesión.</p>
+    </div>
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">5</div><div class="linea"></div></div>
+    <div class="contenido">
+      <div class="qué">A partir de aquí, viaja en cada petición</div>
+      <span class="donde">plugins/axios.js</span>
+      <p>Se agrega automáticamente a todas. Ninguna pantalla tiene que acordarse de adjuntarlo.</p>
+    </div>
+  </div>
+
+  <div class="paso">
+    <div class="marca"><div class="bolita">6</div></div>
+    <div class="contenido">
+      <div class="qué">Y el router lo consulta antes de dejar pasar</div>
+      <span class="donde">router/index.js</span>
+      <p>Las rutas marcadas como privadas preguntan al store si hay sesión. Si no la hay, avisan y devuelven al login.</p>
+    </div>
+  </div>
+
+  <div class="aviso mt" style="margin-left:0; max-width:none;">
+    <strong>Dos candados, no uno.</strong> El del router solo evita mostrar pantallas
+    vacías; es comodidad. El candado de verdad está en el servidor, que sin
+    credencial no entrega ni un dato. Saltarse el primero no sirve de nada.
+  </div>
+</section>
+
+<!-- ============================ ERRORES Y ESTADO ============================ -->
+<section class="pagina">
+  <div class="cab">
+    <h2>5. Cuando algo falla</h2>
+    <div class="sub">Un error también viaja, y también tiene su recorrido</div>
+    <hr />
+  </div>
+
+  <div class="caja">
+    <div class="titulo">El camino de un error</div>
+    <div class="cuerpo">
+      <div class="paso" style="margin-top:4px;">
+        <div class="marca"><div class="bolita">1</div><div class="linea"></div></div>
+        <div class="contenido">
+          <div class="qué">Se ordena antes de repartirlo</div>
+          <span class="donde">plugins/axios.js</span>
+          <p>Un fallo de red, uno del servidor y uno de validación llegan con formas distintas. Se convierten todos a la misma forma para que las pantallas no tengan que distinguirlos.</p>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="marca"><div class="bolita">2</div><div class="linea"></div></div>
+        <div class="contenido">
+          <div class="qué">Si el permiso venció, se resuelve en un solo lugar</div>
+          <p>Se cierra la sesión y se devuelve al login automáticamente, sin repetir esa revisión en cada pantalla.</p>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="marca"><div class="bolita">3</div></div>
+        <div class="contenido">
+          <div class="qué">Lo demás lo muestra la pantalla</div>
+          <p>Porque solo ella sabe el contexto: si venía llenando un formulario, si la lista quedó vacía, o qué campo fue el que el servidor rechazó.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================ DONDE VIVE EL DATO ============================ -->
+<section class="pagina">
+  <div class="cab">
+    <h2>6. Dónde vive cada dato</h2>
+    <div class="sub">Las dos preguntas que más se repiten al escribir una pantalla nueva</div>
+    <hr />
+  </div>
+
+  <div class="caja">
+    <div class="titulo">¿Este dato dónde lo guardo?</div>
+    <div class="cuerpo">
+      <table>
+        <tr><th style="width:38%">Si el dato...</th><th>Va en...</th></tr>
+        <tr><td>lo usa <strong>una sola</strong> pantalla</td><td><span class="pill">ref()</span> dentro de la vista — la lista de cursos, el texto del buscador, si el formulario está abierto</td></tr>
+        <tr><td>lo comparten <strong>varias</strong> pantallas</td><td><span class="pill">/store</span> — la sesión del usuario, el título de la app, si el menú está abierto</td></tr>
+        <tr><td>debe sobrevivir a un <strong>F5</strong></td><td><span class="pill">persist</span> en el store — hoy solo la sesión</td></tr>
+        <tr><td>se <strong>calcula</strong> a partir de otro</td><td><span class="pill">computed()</span> — nunca se guarda aparte, se deriva</td></tr>
+      </table>
+      <p class="nota" style="margin-top:9px;">
+        El error más común es mandar todo al store global. Si un dato solo lo usa
+        una pantalla, se queda en la pantalla: así se sabe de un vistazo quién
+        lo puede cambiar.
+      </p>
+    </div>
+  </div>
+
+  <div class="mt2 caja">
+    <div class="titulo">Cómo se pasan la información los componentes</div>
+    <div class="cuerpo">
+      <table>
+        <tr><th style="width:24%">Mecanismo</th><th style="width:26%">Dirección</th><th>Para qué</th></tr>
+        <tr><td><span class="pill">props</span></td><td>de la vista hacia el componente</td><td>Pasarle los datos que debe mostrar</td></tr>
+        <tr><td><span class="pill">slots</span></td><td>de la vista hacia adentro</td><td>Decidir qué contenido va en un hueco que el componente deja libre</td></tr>
+        <tr><td><span class="pill">emits</span></td><td>del componente hacia la vista</td><td>Avisar que pasó algo, para que decida quien manda</td></tr>
+        <tr><td><span class="pill">store</span></td><td>en todas direcciones</td><td>Cuando los que comparten el dato no tienen relación de padre e hijo</td></tr>
+      </table>
+      <p class="nota" style="margin-top:9px;">
+        Un componente que recibe todo por props y no consulta nada por su cuenta
+        se puede reutilizar en cualquier pantalla. Uno que va a buscar sus propios
+        datos, ya no: pertenece a una sola.
+      </p>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

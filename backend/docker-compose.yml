@@ -1,0 +1,36 @@
+services:
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file: .env
+    volumes:
+      - ./uploads:/app/uploads
+    depends_on: # solo garantiza ORDEN de arranque, no que estén listos
+      - mongo
+      - redis
+
+  worker:
+    build: .
+    command: node src/workers/import.worker.js
+    env_file: .env
+    volumes:
+      - ./uploads:/app/uploads
+    depends_on:
+      - mongo
+      - redis
+
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db # persiste datos entre reinicios
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  mongo_data:

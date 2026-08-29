@@ -1,0 +1,54 @@
+# docker-compose raiz: levanta el backend (api + worker + mongo + redis)
+# y el frontend juntos, cada uno construido desde su propia carpeta.
+#
+# Uso:
+#   docker compose up --build
+#
+# Frontend:  http://localhost:5173
+# Backend:   http://localhost:3000/api
+# Swagger:   http://localhost:3000/api/docs
+
+services:
+  api:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    env_file: ./backend/.env
+    volumes:
+      - ./backend/uploads:/app/uploads
+    depends_on:
+      - mongo
+      - redis
+
+  worker:
+    build: ./backend
+    command: node src/workers/import.worker.js
+    env_file: ./backend/.env
+    volumes:
+      - ./backend/uploads:/app/uploads
+    depends_on:
+      - mongo
+      - redis
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    env_file: ./frontend/.env
+    depends_on:
+      - api
+
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  mongo_data:

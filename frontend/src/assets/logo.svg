@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <!-- Logo de ejemplo: los recursos estaticos (svg, png, fuentes) viven en /assets
+       y se importan con "import logo from '@/assets/logo.svg'" para que Vite los
+       incluya en el build con su hash de version. -->
+  <rect width="120" height="120" rx="26" fill="#2e7d32" />
+  <g fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round">
+    <path d="M32 40h56" />
+    <path d="M32 60h56" />
+    <path d="M32 80h32" />
+  </g>
+  <circle cx="88" cy="80" r="9" fill="#ffffff" />
+</svg>

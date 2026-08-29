@@ -1,0 +1,362 @@
+// =============================================================================
+// /styles/main.scss
+// Estilos GLOBALES de la aplicacion. Se importa una sola vez en main.js.
+//
+// Sigue la guia visual de REPFORA (ver ESTILOS.md, en la raiz del proyecto).
+// En REPFORA este CSS vivia en un style.css enlazado desde el index.html; aqui
+// se importa desde main.js, que es lo que corresponde con Vite: asi el archivo
+// pasa por el compilador de Sass y se versiona en el build.
+//
+// Si un estilo solo afecta a un componente, NO va aqui: va en el <style scoped>
+// de ese componente. Aqui solo lo que se repite en toda la app.
+// =============================================================================
+
+// "@use" es la forma moderna de importar en Sass (reemplaza a @import).
+// "as *" permite usar las variables sin prefijo: $color-borde en vez de vars.$color-borde
+@use "./variables" as *;
+
+// =============================================================================
+// 1. TOKENS
+// Base de toda la identidad visual. Son variables CSS (no de Sass) a proposito:
+// se pueden leer desde cualquier hoja, se ven en el inspector del navegador y
+// se pueden cambiar en caliente. Cambiando --color_button y --color_header se
+// retiñe casi toda la interfaz, porque el resto se deriva de ahi con color-mix.
+// =============================================================================
+:root {
+  // El verde de marca NO se escribe aqui otra vez: se toma de --q-primary, la
+  // variable que Quasar genera a partir de $primary (ver variables.scss). Asi
+  // hay UNA sola fuente de verdad y cambiar $primary retiñe todo de una.
+  //
+  // El segundo valor de var() es el respaldo, por si --q-primary no existiera.
+  --color_button: var(--q-primary, #2e7d32);
+  --color_box: var(--q-primary, #2e7d32);
+  --color_header: var(--q-primary, #2e7d32);
+  --color_input: var(--q-primary, #2e7d32);
+
+  // Este si es un verde propio, distinto del de marca: el de las cabeceras
+  // de card.
+  --color_card: #{$verde-card};
+
+  --color_text_card: white;
+  --color_text_button: white;
+  --color_button_closed: black;
+  --color_tooltip: #d4cece;
+}
+
+// =============================================================================
+// 2. BASE
+// =============================================================================
+body {
+  background-color: $color-fondo-app;
+  // Roboto es la fuente por defecto de Quasar, la misma que usa REPFORA.
+  font-family: "Roboto", "Segoe UI", sans-serif;
+  color: $texto-principal;
+}
+
+// =============================================================================
+// 3. TIPOGRAFIA
+// =============================================================================
+
+// Capitaliza el texto. Se pone en los titulos de vista y de card.
+.style-text {
+  text-transform: capitalize !important;
+}
+
+// Titulo de reporte / bloque destacado.
+.titleReport {
+  font-size: 26px;
+  font-weight: 600;
+}
+
+// Par label/valor: el label va en mayusculas con una barra verde a la izquierda.
+.data-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: $texto-fuerte;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 5px;
+  padding-left: 8px;
+  border-left: 3px solid var(--color_button);
+}
+
+.data-value {
+  font-size: 16px;
+  color: #111111;
+  line-height: 1.5;
+}
+
+.texto-suave {
+  color: $color-texto-suave;
+}
+
+// =============================================================================
+// 4. ESTRUCTURA
+// =============================================================================
+
+// Contenedor centrado con ancho maximo, usado por todas las vistas.
+.contenedor-app {
+  width: 100%;
+  max-width: $ancho-maximo-contenido;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+// Titulo de vista: grande, en negrita y capitalizado.
+.titulo-vista {
+  font-size: 2.125rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+// La linea verde que va debajo del titulo de cada vista.
+.linea-titulo {
+  width: 83%;
+  height: 2px;
+  border: 0;
+  margin: 12px 0 0;
+  background-color: var(--color_button);
+}
+
+// =============================================================================
+// 5. TARJETAS
+// Borde gris suave en vez de sombra, y hover verde.
+// =============================================================================
+.tarjeta {
+  border-radius: $radio-tarjeta;
+  border: 1px solid $color-borde;
+  background: #fff;
+  box-shadow: none;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+// Tarjeta que responde al mouse (las que se pueden abrir o pulsar).
+.tarjeta-hover:hover {
+  background-color: $verde-suave;
+  border-color: $verde-hover;
+}
+
+// Tarjeta que se levanta al pasar el mouse.
+.result-card {
+  border-radius: $radio-tarjeta;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+
+  &:hover {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+    transform: translateY(-1px);
+  }
+}
+
+// Cabecera verde de card.
+.card-header {
+  background-color: var(--color_card);
+  color: var(--color_text_card);
+  border-radius: $radio-tarjeta $radio-tarjeta 0 0;
+}
+
+// =============================================================================
+// 6. SECTION BOX
+// El patron mas repetido de REPFORA: caja con borde verde suave y cabecera en
+// mayusculas. Sirve para agrupar contenido dentro de una vista o un dialogo.
+//
+// Fijate en el color-mix: en vez de inventar un token por cada tono, los fondos
+// se mezclan con white y los bordes con transparent, siempre partiendo de
+// --color_button. Asi al cambiar el verde, todo el sistema se retiñe junto.
+// =============================================================================
+.section-box {
+  border: 1.5px solid color-mix(in srgb, var(--color_button) 35%, transparent);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.section-box__title {
+  background-color: color-mix(in srgb, var(--color_button) 10%, white);
+  color: var(--color_button);
+  font-size: 15px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.1px;
+  padding: 11px 16px;
+  border-bottom: 3px solid var(--color_button);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+// Cabecera de una seccion plegable (q-expansion-item).
+.section-header {
+  background-color: color-mix(in srgb, var(--color_button) 10%, white);
+  transition: background 0.2s;
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--color_button) 20%, white);
+  }
+}
+
+// =============================================================================
+// 7. BOTONES
+// =============================================================================
+.style-btn {
+  background-color: var(--color_button) !important;
+  color: var(--color_text_button) !important;
+}
+
+// Anchos minimos de los botones de dialogo, para que no queden desiguales.
+.btn-cancel {
+  min-width: 120px;
+}
+
+.btn-ok {
+  min-width: 220px;
+}
+
+// Botones de icono de las tablas: discretos, pero responden al mouse.
+.action-secondary {
+  opacity: 0.85;
+  transition: all 0.2s ease;
+
+  &:hover {
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.05) !important;
+    transform: scale(1.1);
+  }
+}
+
+// =============================================================================
+// 8. DIALOGOS
+// =============================================================================
+.dialog-card {
+  width: 520px; // formulario pequeño; 700px para uno mediano
+  max-width: 95vw;
+  border-radius: $radio-dialogo;
+  overflow: hidden;
+}
+
+.dialog-title {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+// =============================================================================
+// 9. MENU LATERAL
+// =============================================================================
+.enlace-menu {
+  border-radius: 12px;
+  margin: 2px 8px;
+
+  // router-link-active la pone vue-router en la ruta que se esta viendo.
+  &.router-link-active {
+    background-color: var(--color_button);
+    color: white;
+    font-weight: 600;
+  }
+}
+
+// =============================================================================
+// 10. TABLAS
+// Cabecera fija: la tabla scrollea por dentro y los titulos se quedan arriba.
+// =============================================================================
+.my-sticky-header-table {
+  // La altura es obligatoria para que la cabecera se pueda quedar fija.
+  height: 60vh;
+
+  .q-table__top,
+  .q-table__bottom,
+  thead tr:first-child th {
+    background-color: white;
+    color: black;
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  tbody td {
+    font-size: 14px;
+  }
+
+  thead tr th {
+    position: sticky;
+    z-index: 1;
+  }
+
+  thead tr:first-child th {
+    top: 0;
+  }
+
+  // Cuando aparece la barra de carga, la cabecera baja la altura de una fila.
+  &.q-table--loading thead tr:last-child th {
+    top: 48px;
+  }
+
+  // Evita que el contenido se meta debajo de la cabecera fija al enfocar.
+  tbody {
+    scroll-margin-top: 48px;
+  }
+}
+
+// =============================================================================
+// 11. INPUTS
+// =============================================================================
+.style-select {
+  color: var(--color_input) !important;
+  border-color: var(--color_input) !important;
+  outline-color: var(--color_input) !important;
+}
+
+// =============================================================================
+// 12. ESTADO VACIO
+// =============================================================================
+.empty-title {
+  font-size: 15px;
+  color: #9e9e9e;
+}
+
+// =============================================================================
+// 13. BLOQUE DE CODIGO (vista "Estructura del proyecto")
+// =============================================================================
+.bloque-codigo {
+  background: $dark-page;
+  color: #e6edf3;
+  border-radius: $radio-tarjeta;
+  padding: 16px 20px;
+  font-family: "Consolas", "Fira Code", monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+// =============================================================================
+// 14. SCROLLBARS
+// Solo aplica en motores Webkit/Blink (Chrome, Edge, Safari, Opera).
+// =============================================================================
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+
+::-webkit-scrollbar:vertical {
+  width: 12px;
+}
+
+::-webkit-scrollbar:horizontal {
+  height: 12px;
+}
+
+::-webkit-scrollbar-button:increment,
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #bbbbbb;
+  border-radius: 5px;
+  border: 2px solid #f1f2f3;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 5px;
+}
