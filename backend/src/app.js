@@ -14,6 +14,7 @@ const authRoutes = require('./modules/auth/auth.routes');
 const productoRoutes = require('./modules/productos/producto.routes');
 const proveedorRoutes = require('./modules/proveedores/proveedor.routes');
 const categoriaRoutes = require('./modules/categorias/categoria.routes');
+const usuarioRoutes = require('./modules/usuarios/usuario.routes');
 
 function crearApp() {
   const app = express();
@@ -21,6 +22,7 @@ function crearApp() {
   app.use(cors());
   app.use(express.json());
   app.use(apiLimiter);
+  app.use('/api/usuarios', usuarioRoutes);
 
   /**
    * @openapi

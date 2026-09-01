@@ -3,7 +3,14 @@ const mongoose = require('mongoose');
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const usuarioSchema = new mongoose.Schema(
+  
   {
+     
+    nombre: {
+      type: String,
+      trim: true,
+      default: '',
+    },
     email: {
       type: String,
       required: true,
