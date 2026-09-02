@@ -40,7 +40,7 @@ const cargarFiltrosDisponibles = async () => {
       proveedoresService.listar(),
     ]);
     categoriasDisponibles.value = resCategorias;
-    proveedoresDisponibles.value = resProveedores;
+    proveedoresDisponibles.value = resProveedores.data;
   } catch (e) {
     // Si esto falla el catalogo igual puede mostrar productos sin filtros,
     // por eso no se bloquea la pantalla: solo se avisa.
@@ -58,7 +58,8 @@ const cargarProductos = async () => {
   error.value = null;
 
   try {
-    productos.value = await productosService.listar(filtros.value);
+    const respuesta = await productosService.listar(filtros.value);
+    productos.value = respuesta.data;
   } catch (e) {
     error.value = e.mensaje;
     notificarError(e);
@@ -96,39 +97,29 @@ function formatoMoneda(valor) {
     <!-- ============================ CABECERA PUBLICA ========================= -->
     <q-header elevated class="bg-primary text-white">
       <q-toolbar>
-        <q-btn
-          flat dense round icon="menu" class="lt-md"
-          aria-label="Abrir filtros" @click="filtrosAbiertos = !filtrosAbiertos"
-        />
+        <q-btn flat dense round icon="menu" class="lt-md" aria-label="Abrir filtros"
+          @click="filtrosAbiertos = !filtrosAbiertos" />
 
         <img :src="logo" alt="Logo" width="30" height="30" class="q-mx-sm" />
         <q-toolbar-title class="text-weight-bold text-subtitle1">
           {{ general.titulo }}
         </q-toolbar-title>
 
-        <q-btn
-          unelevated no-caps color="white" text-color="primary"
-          icon="login" label="Iniciar sesion" @click="irALogin"
-        />
+        <q-btn unelevated no-caps color="white" text-color="primary" icon="login" label="Iniciar sesion"
+          @click="irALogin" />
       </q-toolbar>
 
       <!-- Buscador: siempre visible bajo la barra, en todos los tamaños. -->
       <q-toolbar class="bg-white text-dark q-py-sm">
-        <q-input
-          v-model="filtros.nombre"
-          class="full-width"
-          dense outlined clearable debounce="400"
-          placeholder="Buscar productos..."
-        >
+        <q-input v-model="filtros.nombre" class="full-width" dense outlined clearable debounce="400"
+          placeholder="Buscar productos...">
           <template #prepend><q-icon name="search" /></template>
         </q-input>
       </q-toolbar>
     </q-header>
 
     <!-- ============================ FILTROS LATERALES ========================= -->
-    <q-drawer
-      v-model="filtrosAbiertos" show-if-above bordered :width="260" class="bg-white"
-    >
+    <q-drawer v-model="filtrosAbiertos" show-if-above bordered :width="260" class="bg-white">
       <div class="q-pa-md">
         <div class="text-overline text-weight-bold texto-suave">Filtrar por</div>
 
@@ -137,15 +128,8 @@ function formatoMoneda(valor) {
           <div v-if="!categoriasDisponibles.length" class="text-caption texto-suave">
             No hay categorias disponibles
           </div>
-          <q-checkbox
-            v-for="categoria in categoriasDisponibles"
-            :key="categoria._id"
-            v-model="filtros.categorias"
-            :val="categoria._id"
-            :label="categoria.nombre"
-            dense
-            class="block"
-          />
+          <q-checkbox v-for="categoria in categoriasDisponibles" :key="categoria._id" v-model="filtros.categorias"
+            :val="categoria._id" :label="categoria.nombre" dense class="block" />
         </div>
 
         <q-separator class="q-my-md" />
@@ -155,15 +139,8 @@ function formatoMoneda(valor) {
           <div v-if="!proveedoresDisponibles.length" class="text-caption texto-suave">
             No hay proveedores disponibles
           </div>
-          <q-checkbox
-            v-for="proveedor in proveedoresDisponibles"
-            :key="proveedor._id"
-            v-model="filtros.proveedores"
-            :val="proveedor._id"
-            :label="proveedor.nombre"
-            dense
-            class="block"
-          />
+          <q-checkbox v-for="proveedor in proveedoresDisponibles" :key="proveedor._id" v-model="filtros.proveedores"
+            :val="proveedor._id" :label="proveedor.nombre" dense class="block" />
         </div>
       </div>
     </q-drawer>
@@ -195,17 +172,9 @@ function formatoMoneda(valor) {
             celular           -> col-12 (1 por fila)
         -->
         <div v-else class="row q-col-gutter-md">
-          <div
-            v-for="producto in productos" :key="producto._id"
-            class="col-12 col-sm-6 col-md-4 col-lg-3"
-          >
+          <div v-for="producto in productos" :key="producto._id" class="col-12 col-sm-6 col-md-4 col-lg-3">
             <q-card flat bordered class="tarjeta-producto column full-height">
-              <q-img
-                v-if="producto.imagen"
-                :src="producto.imagen"
-                :ratio="4 / 3"
-                fit="cover"
-              >
+              <q-img v-if="producto.imagen" :src="producto.imagen" :ratio="4 / 3" fit="cover">
                 <template #error>
                   <div class="absolute-full flex flex-center bg-grey-2">
                     <q-icon name="image_not_supported" size="32px" color="grey-5" />
@@ -239,10 +208,8 @@ function formatoMoneda(valor) {
                 <div class="text-subtitle1 text-weight-bold text-primary">
                   {{ formatoMoneda(producto.precio) }}
                 </div>
-                <q-badge
-                  v-if="producto.stock !== undefined && producto.stock !== null"
-                  :color="producto.stock > 0 ? 'positive' : 'grey-6'"
-                >
+                <q-badge v-if="producto.stock !== undefined && producto.stock !== null"
+                  :color="producto.stock > 0 ? 'positive' : 'grey-6'">
                   {{ producto.stock > 0 ? `${producto.stock} disponibles` : "Sin stock" }}
                 </q-badge>
               </q-card-section>
