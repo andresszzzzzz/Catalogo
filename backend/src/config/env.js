@@ -30,7 +30,7 @@ if (faltantes.length > 0) {
   // eslint-disable-next-line no-console
   console.error(
     `[env] Faltan variables de entorno obligatorias: ${faltantes.join(', ')}. ` +
-      'Revisa tu archivo .env (usa .env.example como referencia). Abortando arranque.'
+    'Revisa tu archivo .env (usa .env.example como referencia). Abortando arranque.'
   );
   process.exit(1);
 }
@@ -41,12 +41,9 @@ const env = {
   MONGO_URI: process.env.MONGO_URI,
   REDIS_HOST: process.env.REDIS_HOST,
   REDIS_PORT: Number(process.env.REDIS_PORT),
+  REDIS_PASSWORD: process.env.REDIS_PASSWORD || '',
+  REDIS_TLS: process.env.REDIS_TLS === 'true',
   JWT_SECRET: process.env.JWT_SECRET,
-  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN,
-  MAX_FILE_SIZE_MB: Number(process.env.MAX_FILE_SIZE_MB),
-  BATCH_SIZE: Number(process.env.BATCH_SIZE),
-  CACHE_TTL_SECONDS: Number(process.env.CACHE_TTL_SECONDS),
-  IMPORT_ERRORS_CAP: Number(process.env.IMPORT_ERRORS_CAP),
 };
 
 module.exports = env;

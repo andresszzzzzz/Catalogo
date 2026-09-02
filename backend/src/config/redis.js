@@ -6,6 +6,8 @@ const env = require('./env');
 const redis = new Redis({
   host: env.REDIS_HOST,
   port: env.REDIS_PORT,
+  password: env.REDIS_PASSWORD || undefined,
+  tls: env.REDIS_TLS ? {} : undefined,
   maxRetriesPerRequest: null,
   lazyConnect: false,
 });

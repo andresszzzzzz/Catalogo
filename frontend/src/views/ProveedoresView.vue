@@ -43,7 +43,8 @@ const cargar = async () => {
   error.value = null;
 
   try {
-    proveedores.value = await proveedoresService.listar();
+    const respuesta = await proveedoresService.listar();
+    proveedores.value = respuesta.data;
     general.marcarSincronizacion();
   } catch (e) {
     error.value = e.mensaje;
@@ -132,20 +133,10 @@ const eliminar = async (proveedor) => {
 <template>
   <q-page>
     <div class="contenedor-app">
-      <EncabezadoPagina
-        titulo="Proveedores"
-        subtitulo="Empresas y personas que abastecen el catalogo"
-        icono="local_shipping"
-      >
+      <EncabezadoPagina titulo="Proveedores" subtitulo="Empresas y personas que abastecen el catalogo"
+        icono="local_shipping">
         <template #acciones>
-          <q-btn
-            unelevated
-            no-caps
-            color="primary"
-            icon="add"
-            label="Nuevo proveedor"
-            @click="abrirCreacion"
-          />
+          <q-btn unelevated no-caps color="primary" icon="add" label="Nuevo proveedor" @click="abrirCreacion" />
         </template>
       </EncabezadoPagina>
 
@@ -157,24 +148,16 @@ const eliminar = async (proveedor) => {
         </template>
       </q-banner>
 
-      <TablaDatos
-        :filas="proveedores"
-        :columnas="columnas"
-        :cargando="cargando"
-        mensaje-vacio="Aun no hay proveedores registrados"
-      >
+      <TablaDatos :filas="proveedores" :columnas="columnas" :cargando="cargando"
+        mensaje-vacio="Aun no hay proveedores registrados">
         <template #body-cell-acciones="celda">
           <q-td :props="celda" class="text-right">
-            <q-btn
-              flat dense round size="sm" icon="edit" color="primary"
-              class="action-secondary" @click="abrirEdicion(celda.row)"
-            >
+            <q-btn flat dense round size="sm" icon="edit" color="primary" class="action-secondary"
+              @click="abrirEdicion(celda.row)">
               <q-tooltip>Editar</q-tooltip>
             </q-btn>
-            <q-btn
-              flat dense round size="sm" icon="delete" color="negative"
-              class="action-secondary" @click="eliminar(celda.row)"
-            >
+            <q-btn flat dense round size="sm" icon="delete" color="negative" class="action-secondary"
+              @click="eliminar(celda.row)">
               <q-tooltip>Eliminar</q-tooltip>
             </q-btn>
           </q-td>
@@ -196,32 +179,18 @@ const eliminar = async (proveedor) => {
 
         <q-form ref="formularioRef" greedy @submit="guardar">
           <q-card-section class="q-gutter-md">
-            <q-input
-              v-model="formulario.nombre" outlined dense label="Nombre *"
-              :rules="[requerido('El nombre'), minimo(2, 'El nombre')]" lazy-rules
-            />
-            <q-input
-              v-model="formulario.nit" outlined dense label="NIT / Identificacion"
-              hint="Opcional"
-            />
-            <q-input
-              v-model="formulario.telefono" outlined dense label="Telefono"
-              hint="Opcional"
-            />
-            <q-input
-              v-model="formulario.email" outlined dense type="email" label="Email"
-              hint="Opcional"
-              :rules="[(v) => !v || esEmail()(v)]" lazy-rules
-            />
+            <q-input v-model="formulario.nombre" outlined dense label="Nombre *"
+              :rules="[requerido('El nombre'), minimo(2, 'El nombre')]" lazy-rules />
+            <q-input v-model="formulario.nit" outlined dense label="NIT / Identificacion" hint="Opcional" />
+            <q-input v-model="formulario.telefono" outlined dense label="Telefono" hint="Opcional" />
+            <q-input v-model="formulario.email" outlined dense type="email" label="Email" hint="Opcional"
+              :rules="[(v) => !v || esEmail()(v)]" lazy-rules />
           </q-card-section>
 
           <q-card-actions align="right" class="q-px-md q-pb-md">
             <q-btn v-close-popup flat no-caps label="Cancelar" color="dark" class="btn-cancel" />
-            <q-btn
-              unelevated no-caps type="submit" color="primary" class="btn-ok"
-              :label="esEdicion ? 'Guardar cambios' : 'Registrar proveedor'"
-              :loading="guardando"
-            />
+            <q-btn unelevated no-caps type="submit" color="primary" class="btn-ok"
+              :label="esEdicion ? 'Guardar cambios' : 'Registrar proveedor'" :loading="guardando" />
           </q-card-actions>
         </q-form>
       </q-card>
