@@ -74,7 +74,8 @@ const cargar = async () => {
   error.value = null;
 
   try {
-    productos.value = await productosService.listar();
+    const respuesta = await productosService.listar();
+    productos.value = respuesta.data;
     general.marcarSincronizacion();
   } catch (e) {
     error.value = e.mensaje;
@@ -96,13 +97,14 @@ const editando = ref(null);
 const formularioRef = ref(null);
 
 const formularioVacio = () => ({
+  sku: "",
   nombre: "",
   descripcion: "",
   precio: null,
   stock: null,
   categoria: null,
-  proveedor: null,
-  imagen: "",
+  proveedorId: null,
+  imagenUrl: "",
 });
 const formulario = ref(formularioVacio());
 
@@ -117,15 +119,14 @@ const abrirCreacion = () => {
 const abrirEdicion = (producto) => {
   editando.value = producto;
   formulario.value = {
+    sku: producto.sku || "",
     nombre: producto.nombre,
     descripcion: producto.descripcion || "",
     precio: producto.precio,
     stock: producto.stock,
-    // el backend puede devolver la categoria/proveedor "poblados" ({_id, nombre})
-    // o solo el id: en ambos casos el select necesita el id puro.
     categoria: producto.categoria?._id || producto.categoria || null,
-    proveedor: producto.proveedor?._id || producto.proveedor || null,
-    imagen: producto.imagen || "",
+    proveedorId: producto.proveedorId?._id || producto.proveedorId || null,
+    imagenUrl: producto.imagenUrl || "",
   };
   dialogo.value = true;
 };
@@ -135,13 +136,14 @@ const guardar = async () => {
 
   try {
     const datos = {
+      sku: formulario.value.sku.trim(),
       nombre: formulario.value.nombre.trim(),
       descripcion: formulario.value.descripcion.trim(),
       precio: Number(formulario.value.precio),
       stock: Number(formulario.value.stock),
       categoria: formulario.value.categoria,
-      proveedor: formulario.value.proveedor,
-      imagen: formulario.value.imagen.trim(),
+      proveedorId: formulario.value.proveedorId,
+      imagenUrl: formulario.value.imagenUrl.trim(),
     };
 
     const respuesta = esEdicion.value
@@ -227,6 +229,8 @@ const eliminar = async (producto) => {
 
         <q-form ref="formularioRef" greedy @submit="guardar">
           <q-card-section class="q-gutter-md">
+            <q-input v-model="formulario.sku" outlined dense label="SKU *" :rules="[requerido('El SKU')]" lazy-rules />
+
             <q-input v-model="formulario.nombre" outlined dense label="Nombre *"
               :rules="[requerido('El nombre'), minimo(2, 'El nombre')]" lazy-rules />
 
@@ -250,14 +254,13 @@ const eliminar = async (producto) => {
               option-value="_id" option-label="nombre" emit-value map-options
               :rules="[seleccionRequerida('una categoria')]" lazy-rules />
 
-            <q-select v-model="formulario.proveedor" outlined dense label="Proveedor *" :options="proveedores"
+            <q-select v-model="formulario.proveedorId" outlined dense label="Proveedor *" :options="proveedores"
               option-value="_id" option-label="nombre" emit-value map-options
               :rules="[seleccionRequerida('un proveedor')]" lazy-rules />
 
-            <q-input v-model="formulario.imagen" outlined dense label="URL de la imagen"
+            <q-input v-model="formulario.imagenUrl" outlined dense label="URL de la imagen"
               hint="Opcional. Se muestra en la tarjeta del catalogo." />
           </q-card-section>
-
           <q-card-actions align="right" class="q-px-md q-pb-md">
             <q-btn v-close-popup flat no-caps label="Cancelar" color="dark" class="btn-cancel" />
             <q-btn unelevated no-caps type="submit" color="primary" class="btn-ok"
