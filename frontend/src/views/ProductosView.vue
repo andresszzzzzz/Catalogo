@@ -58,7 +58,7 @@ const cargarListasApoyo = async () => {
       proveedoresService.listar(),
     ]);
     categorias.value = resCategorias;
-    proveedores.value = resProveedores;
+    proveedores.value = resProveedores.data;
   } catch (e) {
     notificarError(e);
   }
@@ -181,16 +181,10 @@ const eliminar = async (producto) => {
 <template>
   <q-page>
     <div class="contenedor-app">
-      <EncabezadoPagina
-        titulo="Productos"
-        subtitulo="Catalogo interno: precio, stock, categoria y proveedor"
-        icono="inventory_2"
-      >
+      <EncabezadoPagina titulo="Productos" subtitulo="Catalogo interno: precio, stock, categoria y proveedor"
+        icono="inventory_2">
         <template #acciones>
-          <q-btn
-            unelevated no-caps color="primary" icon="add"
-            label="Nuevo producto" @click="abrirCreacion"
-          />
+          <q-btn unelevated no-caps color="primary" icon="add" label="Nuevo producto" @click="abrirCreacion" />
         </template>
       </EncabezadoPagina>
 
@@ -202,24 +196,16 @@ const eliminar = async (producto) => {
         </template>
       </q-banner>
 
-      <TablaDatos
-        :filas="productos"
-        :columnas="columnas"
-        :cargando="cargando"
-        mensaje-vacio="Aun no hay productos registrados"
-      >
+      <TablaDatos :filas="productos" :columnas="columnas" :cargando="cargando"
+        mensaje-vacio="Aun no hay productos registrados">
         <template #body-cell-acciones="celda">
           <q-td :props="celda" class="text-right">
-            <q-btn
-              flat dense round size="sm" icon="edit" color="primary"
-              class="action-secondary" @click="abrirEdicion(celda.row)"
-            >
+            <q-btn flat dense round size="sm" icon="edit" color="primary" class="action-secondary"
+              @click="abrirEdicion(celda.row)">
               <q-tooltip>Editar</q-tooltip>
             </q-btn>
-            <q-btn
-              flat dense round size="sm" icon="delete" color="negative"
-              class="action-secondary" @click="eliminar(celda.row)"
-            >
+            <q-btn flat dense round size="sm" icon="delete" color="negative" class="action-secondary"
+              @click="eliminar(celda.row)">
               <q-tooltip>Eliminar</q-tooltip>
             </q-btn>
           </q-td>
@@ -241,62 +227,41 @@ const eliminar = async (producto) => {
 
         <q-form ref="formularioRef" greedy @submit="guardar">
           <q-card-section class="q-gutter-md">
-            <q-input
-              v-model="formulario.nombre" outlined dense label="Nombre *"
-              :rules="[requerido('El nombre'), minimo(2, 'El nombre')]" lazy-rules
-            />
+            <q-input v-model="formulario.nombre" outlined dense label="Nombre *"
+              :rules="[requerido('El nombre'), minimo(2, 'El nombre')]" lazy-rules />
 
-            <q-input
-              v-model="formulario.descripcion" outlined dense type="textarea"
-              label="Descripcion" hint="Opcional" autogrow
-            />
+            <q-input v-model="formulario.descripcion" outlined dense type="textarea" label="Descripcion" hint="Opcional"
+              autogrow />
 
             <div class="row q-col-gutter-md">
               <div class="col-12 col-sm-6">
-                <q-input
-                  v-model.number="formulario.precio" outlined dense type="number"
-                  label="Precio *" prefix="$"
+                <q-input v-model.number="formulario.precio" outlined dense type="number" label="Precio *" prefix="$"
                   :rules="[requerido('El precio'), (v) => Number(v) >= 0 || 'El precio no puede ser negativo']"
-                  lazy-rules
-                />
+                  lazy-rules />
               </div>
               <div class="col-12 col-sm-6">
-                <q-input
-                  v-model.number="formulario.stock" outlined dense type="number"
-                  label="Stock *"
+                <q-input v-model.number="formulario.stock" outlined dense type="number" label="Stock *"
                   :rules="[requerido('El stock'), (v) => Number.isInteger(Number(v)) && Number(v) >= 0 || 'El stock debe ser un entero valido']"
-                  lazy-rules
-                />
+                  lazy-rules />
               </div>
             </div>
 
-            <q-select
-              v-model="formulario.categoria" outlined dense label="Categoria *"
-              :options="categorias" option-value="_id" option-label="nombre"
-              emit-value map-options
-              :rules="[seleccionRequerida('una categoria')]" lazy-rules
-            />
+            <q-select v-model="formulario.categoria" outlined dense label="Categoria *" :options="categorias"
+              option-value="_id" option-label="nombre" emit-value map-options
+              :rules="[seleccionRequerida('una categoria')]" lazy-rules />
 
-            <q-select
-              v-model="formulario.proveedor" outlined dense label="Proveedor *"
-              :options="proveedores" option-value="_id" option-label="nombre"
-              emit-value map-options
-              :rules="[seleccionRequerida('un proveedor')]" lazy-rules
-            />
+            <q-select v-model="formulario.proveedor" outlined dense label="Proveedor *" :options="proveedores"
+              option-value="_id" option-label="nombre" emit-value map-options
+              :rules="[seleccionRequerida('un proveedor')]" lazy-rules />
 
-            <q-input
-              v-model="formulario.imagen" outlined dense label="URL de la imagen"
-              hint="Opcional. Se muestra en la tarjeta del catalogo."
-            />
+            <q-input v-model="formulario.imagen" outlined dense label="URL de la imagen"
+              hint="Opcional. Se muestra en la tarjeta del catalogo." />
           </q-card-section>
 
           <q-card-actions align="right" class="q-px-md q-pb-md">
             <q-btn v-close-popup flat no-caps label="Cancelar" color="dark" class="btn-cancel" />
-            <q-btn
-              unelevated no-caps type="submit" color="primary" class="btn-ok"
-              :label="esEdicion ? 'Guardar cambios' : 'Registrar producto'"
-              :loading="guardando"
-            />
+            <q-btn unelevated no-caps type="submit" color="primary" class="btn-ok"
+              :label="esEdicion ? 'Guardar cambios' : 'Registrar producto'" :loading="guardando" />
           </q-card-actions>
         </q-form>
       </q-card>
