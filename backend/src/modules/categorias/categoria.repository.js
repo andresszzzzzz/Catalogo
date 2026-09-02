@@ -12,12 +12,20 @@ function porSlug(slug) {
   return Categoria.findOne({ slug: String(slug).trim().toLowerCase() });
 }
 
+function crear(datos) {
+  return Categoria.create(datos);
+}
+
 async function actualizar(id, datos) {
   const categoria = await Categoria.findById(id);
   if (!categoria) return null;
   Object.assign(categoria, datos);
   await categoria.save();
   return categoria;
+}
+
+function eliminar(id) {
+  return Categoria.findByIdAndDelete(id);
 }
 
 /**
@@ -43,4 +51,4 @@ async function upsertFaltantes(slugs) {
   await Categoria.bulkWrite(operaciones);
 }
 
-module.exports = { listar, porId, porSlug, actualizar, upsertFaltantes };
+module.exports = { listar, porId, porSlug, crear, actualizar, eliminar, upsertFaltantes };

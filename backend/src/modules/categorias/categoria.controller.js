@@ -18,13 +18,31 @@ async function obtenerPorSlug(req, res, next) {
   }
 }
 
-async function actualizar(req, res, next) {
+async function crear(req, res, next) {
   try {
-    const categoria = await categoriaService.actualizarCategoria(req.params.id, req.body || {});
-    res.status(200).json(categoria);
+    const categoria = await categoriaService.crearCategoria(req.body || {});
+    res.status(201).json({ msg: 'Categoría creada exitosamente', ...categoria.toJSON() });
   } catch (error) {
     next(error);
   }
 }
 
-module.exports = { listar, obtenerPorSlug, actualizar };
+async function actualizar(req, res, next) {
+  try {
+    const categoria = await categoriaService.actualizarCategoria(req.params.id, req.body || {});
+    res.status(200).json({ msg: 'Categoría actualizada exitosamente', ...categoria.toJSON() });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function eliminar(req, res, next) {
+  try {
+    await categoriaService.eliminarCategoria(req.params.id);
+    res.status(200).json({ msg: 'Categoría eliminada exitosamente' });
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = { listar, obtenerPorSlug, crear, actualizar, eliminar };

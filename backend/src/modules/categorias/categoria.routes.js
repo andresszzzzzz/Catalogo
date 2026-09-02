@@ -14,8 +14,16 @@ const router = express.Router();
  *     security: [{ bearerAuth: [] }]
  *     responses:
  *       200: { description: Lista de categorías }
+ *   post:
+ *     tags: [Categorías]
+ *     summary: Crear categoría (solo admin)
+ *     security: [{ bearerAuth: [] }]
+ *     responses:
+ *       201: { description: Categoría creada }
+ *       400: { description: Validación }
  */
 router.get('/', categoriaController.listar);
+router.post('/', auth, rol('admin'), categoriaController.crear);
 
 /**
  * @openapi
@@ -40,7 +48,15 @@ router.get('/:slug', categoriaController.obtenerPorSlug);
  *     responses:
  *       200: { description: Actualizada }
  *       404: { description: No existe }
+ *   delete:
+ *     tags: [Categorías]
+ *     summary: Eliminar categoría (solo admin)
+ *     security: [{ bearerAuth: [] }]
+ *     responses:
+ *       200: { description: Eliminada }
+ *       404: { description: No existe }
  */
 router.put('/:id', auth, rol('admin'), categoriaController.actualizar);
+router.delete('/:id', auth, rol('admin'), categoriaController.eliminar);
 
 module.exports = router;
