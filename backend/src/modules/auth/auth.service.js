@@ -45,7 +45,7 @@ async function login(email, password) {
   }
 
   const token = jwt.sign({ sub: usuario._id.toString(), rol: usuario.rol }, env.JWT_SECRET, {
-    expiresIn: env.JWT_EXPIRES_IN,
+    expiresIn: env.JWT_EXPIRES_IN || '1h',
   });
 
   return { token };
