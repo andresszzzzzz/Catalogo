@@ -2,6 +2,28 @@ const mongoose = require('mongoose');
 const proveedorRepository = require('./proveedor.repository');
 const AppError = require('../../errors/AppError');
 
+
+function slugify(texto) {
+  return String(texto)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // quita acentos
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+async function generarSlugUnico(nombre) {
+  const base = slugify(nombre) || 'proveedor';
+  let candidato = base;
+  let sufijo = 2;
+  while (await proveedorRepository.porSlug(candidato)) {
+    candidato = `${base}-${sufijo}`;
+    sufijo += 1;
+  }
+  return candidato;
+}
+
 function clampLimit(limit) {
   const n = Number(limit) || 20;
   return Math.min(Math.max(n, 1), 100);
@@ -38,23 +60,33 @@ async function obtenerProveedor(id) {
 }
 
 async function crearProveedor(datos) {
-  const { nombre, slug, contactoEmail, logoUrl } = datos;
-  if (!nombre || !slug) {
-    throw new AppError('nombre y slug son requeridos', 400, 'VALIDACION');
+  const { nombre, nit, telefono, email, slug: slugManual, logoUrl } = datos;
+  if (!nombre) {
+    throw new AppError('nombre es requerido', 400, 'VALIDACION');
   }
 
-  const [porNombre, porSlug] = await Promise.all([
-    proveedorRepository.porNombre(nombre),
-    proveedorRepository.porSlug(slug),
-  ]);
-  if (porNombre || porSlug) {
-    throw new AppError('nombre o slug duplicado', 409, 'DUPLICADO');
+  const porNombre = await proveedorRepository.porNombre(nombre);
+  if (porNombre) {
+    throw new AppError('nombre duplicado', 409, 'DUPLICADO');
+  }
+
+  let slug;
+  if (slugManual) {
+    const existentePorSlug = await proveedorRepository.porSlug(slugManual);
+    if (existentePorSlug) {
+      throw new AppError('nombre o slug duplicado', 409, 'DUPLICADO');
+    }
+    slug = String(slugManual).toLowerCase();
+  } else {
+    slug = await generarSlugUnico(nombre);
   }
 
   return proveedorRepository.crear({
     nombre,
-    slug: String(slug).toLowerCase(),
-    contactoEmail: contactoEmail ?? null,
+    slug,
+    nit: nit ?? '',
+    telefono: telefono ?? '',
+    email: email ?? null,
     logoUrl: logoUrl ?? null,
   });
 }

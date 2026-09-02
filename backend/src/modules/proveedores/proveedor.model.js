@@ -12,7 +12,7 @@ const proveedorSchema = new mongoose.Schema(
       unique: true,
       trim: true,
     },
-    slug: {
+        slug: {
       type: String,
       required: true,
       unique: true,
@@ -20,12 +20,22 @@ const proveedorSchema = new mongoose.Schema(
       lowercase: true,
       match: [SLUG_REGEX, 'slug debe ser minúsculas, sin espacios (ej: acme-corp)'],
     },
-    contactoEmail: {
+    nit: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    telefono: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    email: {
       type: String,
       default: null,
       validate: {
         validator: (v) => v === null || v === '' || EMAIL_REGEX.test(v),
-        message: 'contactoEmail inválido',
+        message: 'email inválido',
       },
     },
     logoUrl: {
