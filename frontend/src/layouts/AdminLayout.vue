@@ -31,7 +31,7 @@ import { useGeneralStore } from "@/store/General";
 import { useAuthStore } from "@/store/Auth";
 import { useNotificar } from "@/composables/useNotificar";
 import { formatDateTime } from "@/utils/formatDate";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/lojo.png";
 
 const general = useGeneralStore();
 const auth = useAuthStore();

@@ -20,7 +20,9 @@ import { categoriasService } from "@/services/categorias.service";
 import { proveedoresService } from "@/services/proveedores.service";
 import { useNotificar } from "@/composables/useNotificar";
 import { useGeneralStore } from "@/store/General";
-import logo from "@/assets/logo.svg";
+import logo from "@/assets/lojo.png";
+
+
 
 const router = useRouter();
 const general = useGeneralStore();
