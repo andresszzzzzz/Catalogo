@@ -100,7 +100,7 @@ function formatoMoneda(valor) {
         <q-btn flat dense round icon="menu" class="lt-md" aria-label="Abrir filtros"
           @click="filtrosAbiertos = !filtrosAbiertos" />
 
-        <img :src="logo" alt="Logo" width="30" height="30" class="q-mx-sm" />
+        <!-- <img :src="logo" alt="Logo" width="30" height="30" class="q-mx-sm" /> -->
         <q-toolbar-title class="text-weight-bold text-subtitle1">
           {{ general.titulo }}
         </q-toolbar-title>
