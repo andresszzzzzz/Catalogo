@@ -38,6 +38,7 @@ const columnas = [
     field: "precio", format: (v) => formatoMoneda(v),
   },
   { name: "stock", label: "Stock", field: "stock", align: "right", sortable: true },
+  { name: "estado", label: "Estado", field: "activo", align: "center" },
   { name: "acciones", label: "Acciones", field: "acciones", align: "right" },
 ];
 
@@ -178,6 +179,16 @@ const eliminar = async (producto) => {
     notificarError(e);
   }
 };
+
+const reactivar = async (producto) => {
+  try {
+    const respuesta = await productosService.activar(producto._id);
+    notificarOk(respuesta?.msg || "Producto activado");
+    await cargar();
+  } catch (e) {
+    notificarError(e);
+  }
+};
 </script>
 
 <template>
@@ -200,15 +211,27 @@ const eliminar = async (producto) => {
 
       <TablaDatos :filas="productos" :columnas="columnas" :cargando="cargando"
         mensaje-vacio="Aun no hay productos registrados">
+        <template #body-cell-estado="celda">
+          <q-td :props="celda" class="text-center">
+            <q-badge :color="celda.row.activo ? 'positive' : 'grey'">
+              {{ celda.row.activo ? "Activo" : "Inactivo" }}
+            </q-badge>
+          </q-td>
+        </template>
+
         <template #body-cell-acciones="celda">
           <q-td :props="celda" class="text-right">
             <q-btn flat dense round size="sm" icon="edit" color="primary" class="action-secondary"
               @click="abrirEdicion(celda.row)">
               <q-tooltip>Editar</q-tooltip>
             </q-btn>
-            <q-btn flat dense round size="sm" icon="delete" color="negative" class="action-secondary"
-              @click="eliminar(celda.row)">
-              <q-tooltip>Eliminar</q-tooltip>
+            <q-btn v-if="celda.row.activo" flat dense round size="sm" icon="delete" color="negative"
+              class="action-secondary" @click="eliminar(celda.row)">
+              <q-tooltip>Desactivar</q-tooltip>
+            </q-btn>
+            <q-btn v-else flat dense round size="sm" icon="restore" color="positive" class="action-secondary"
+              @click="reactivar(celda.row)">
+              <q-tooltip>Reactivar</q-tooltip>
             </q-btn>
           </q-td>
         </template>

@@ -40,4 +40,5 @@ export const productosService = {
   crear: (datos) => post(RECURSO, datos),
   actualizar: (id, datos) => put(`${RECURSO}/${id}`, datos),
   eliminar: (id) => del(`${RECURSO}/${id}`),
+  activar: (id) => put(`${RECURSO}/${id}/activar`, {}),
 };
