@@ -57,6 +57,10 @@ const productoSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+     activo: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true }
 );

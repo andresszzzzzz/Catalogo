@@ -75,14 +75,27 @@ router.get('/stats', productoController.stats);
  *       409: { description: sku duplicado }
  *   delete:
  *     tags: [Productos]
- *     summary: Eliminar producto (solo admin)
+ *     summary: Desactivar producto (solo admin, no lo borra de la base de datos)
  *     security: [{ bearerAuth: [] }]
  *     responses:
- *       204: { description: Eliminado }
+ *       200: { description: Desactivado }
  *       404: { description: No existe }
  */
 router.get('/:id', productoController.obtener);
 router.put('/:id', auth, rol('admin'), productoController.actualizar);
-router.delete('/:id', auth, rol('admin'), productoController.eliminar);
+router.delete('/:id', auth, rol('admin'), productoController.desactivar);
+
+/**
+ * @openapi
+ * /api/productos/{id}/activar:
+ *   put:
+ *     tags: [Productos]
+ *     summary: Reactivar un producto previamente desactivado (solo admin)
+ *     security: [{ bearerAuth: [] }]
+ *     responses:
+ *       200: { description: Activado }
+ *       404: { description: No existe }
+ */
+router.put('/:id/activar', auth, rol('admin'), productoController.activar);
 
 module.exports = router;

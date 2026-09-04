@@ -26,6 +26,10 @@ async function listarProductos(query) {
     filtro.disponible = query.disponible === 'true' || query.disponible === true;
   }
 
+  if (query.activo !== undefined) {
+    filtro.activo = query.activo === 'true' || query.activo === true;
+  }
+
   if (query.proveedor) {
     if (mongoose.isValidObjectId(query.proveedor)) {
       filtro.proveedorId = query.proveedor;
@@ -123,15 +127,26 @@ async function actualizarProducto(id, datos) {
   return actualizado;
 }
 
-async function eliminarProducto(id) {
+async function desactivarProducto(id) {
   if (!mongoose.isValidObjectId(id)) {
     throw new AppError('Identificador inválido', 400, 'ID_INVALIDO');
   }
-  const eliminado = await productoRepository.eliminar(id);
-  if (!eliminado) {
+  const actualizado = await productoRepository.actualizar(id, { activo: false });
+  if (!actualizado) {
     throw new AppError('Producto no encontrado', 404, 'NO_ENCONTRADO');
   }
-  return eliminado;
+  return actualizado;
+}
+
+async function activarProducto(id) {
+  if (!mongoose.isValidObjectId(id)) {
+    throw new AppError('Identificador inválido', 400, 'ID_INVALIDO');
+  }
+  const actualizado = await productoRepository.actualizar(id, { activo: true });
+  if (!actualizado) {
+    throw new AppError('Producto no encontrado', 404, 'NO_ENCONTRADO');
+  }
+  return actualizado;
 }
 
 module.exports = {
@@ -140,5 +155,6 @@ module.exports = {
   obtenerProducto,
   crearProducto,
   actualizarProducto,
-  eliminarProducto,
+  desactivarProducto,
+  activarProducto,
 };

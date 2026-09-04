@@ -45,13 +45,22 @@ async function actualizar(req, res, next) {
   }
 }
 
-async function eliminar(req, res, next) {
+async function desactivar(req, res, next) {
   try {
-    await productoService.eliminarProducto(req.params.id);
-    res.status(204).send();
+    const producto = await productoService.desactivarProducto(req.params.id);
+    res.status(200).json({ msg: 'Producto desactivado exitosamente', ...producto.toJSON() });
   } catch (error) {
     next(error);
   }
 }
 
-module.exports = { listar, stats, obtener, crear, actualizar, eliminar };
+async function activar(req, res, next) {
+  try {
+    const producto = await productoService.activarProducto(req.params.id);
+    res.status(200).json({ msg: 'Producto activado exitosamente', ...producto.toJSON() });
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = { listar, stats, obtener, crear, actualizar, desactivar, activar };
