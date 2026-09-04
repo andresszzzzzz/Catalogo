@@ -129,7 +129,7 @@ function formatoMoneda(valor) {
             No hay categorias disponibles
           </div>
           <q-checkbox v-for="categoria in categoriasDisponibles" :key="categoria._id" v-model="filtros.categorias"
-            :val="categoria._id" :label="categoria.nombre" dense class="block" />
+            :val="categoria.slug" :label="categoria.nombre" />
         </div>
 
         <q-separator class="q-my-md" />
@@ -190,8 +190,8 @@ function formatoMoneda(valor) {
                 <div class="text-subtitle1 text-weight-bold nombre-producto">{{ producto.nombre }}</div>
 
                 <div class="row items-center q-gutter-xs q-mt-xs">
-                  <q-badge v-if="producto.categoria?.nombre" color="primary" outline>
-                    {{ producto.categoria.nombre }}
+                  <q-badge v-if="producto.categoria" color="primary" outline class="style-text">
+                    {{ producto.categoria }}
                   </q-badge>
                   <span v-if="producto.proveedor?.nombre" class="text-caption texto-suave">
                     {{ producto.proveedor.nombre }}
@@ -242,6 +242,7 @@ function formatoMoneda(valor) {
 .imagen-producto {
   background-color: #f4f4f2;
   padding: 12px;
+
   :deep(img) {
     padding: 8px;
   }
