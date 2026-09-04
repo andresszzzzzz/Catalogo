@@ -174,7 +174,8 @@ function formatoMoneda(valor) {
         <div v-else class="row q-col-gutter-md">
           <div v-for="producto in productos" :key="producto._id" class="col-12 col-sm-6 col-md-4 col-lg-3">
             <q-card flat bordered class="tarjeta-producto column full-height">
-              <q-img v-if="producto.imagenUrl" :src="producto.imagenUrl" :ratio="4 / 3" fit="cover">
+              <q-img v-if="producto.imagenUrl" :src="producto.imagenUrl" :ratio="4 / 3" fit="contain"
+                class="imagen-producto">
                 <template #error>
                   <div class="absolute-full flex flex-center bg-grey-2">
                     <q-icon name="image_not_supported" size="32px" color="grey-5" />
@@ -235,6 +236,14 @@ function formatoMoneda(valor) {
 
   &__sin-imagen {
     height: 160px;
+  }
+}
+
+.imagen-producto {
+  background-color: #f4f4f2;
+  padding: 12px;
+  :deep(img) {
+    padding: 8px;
   }
 }
 
