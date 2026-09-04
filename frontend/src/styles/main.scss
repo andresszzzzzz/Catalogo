@@ -128,8 +128,8 @@ body {
   border-radius: $radio-tarjeta;
   border: 1px solid $color-borde;
   background: #fff;
-  box-shadow: none;
-  transition: background 0.18s ease, border-color 0.18s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 // Tarjeta que responde al mouse (las que se pueden abrir o pulsar).
@@ -151,7 +151,7 @@ body {
 
 // Cabecera verde de card.
 .card-header {
-  background-color: var(--color_card);
+  background: linear-gradient(135deg, var(--color_card) 0%, color-mix(in srgb, var(--color_card) 80%, black) 100%);
   color: var(--color_text_card);
   border-radius: $radio-tarjeta $radio-tarjeta 0 0;
 }
