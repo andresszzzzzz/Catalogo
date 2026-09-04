@@ -225,7 +225,7 @@ const reactivar = async (producto) => {
               @click="abrirEdicion(celda.row)">
               <q-tooltip>Editar</q-tooltip>
             </q-btn>
-            <q-btn v-if="celda.row.activo" flat dense round size="sm" icon="delete" color="negative"
+            <q-btn v-if="celda.row.activo" flat dense round size="sm" icon="block" color="negative"
               class="action-secondary" @click="eliminar(celda.row)">
               <q-tooltip>Desactivar</q-tooltip>
             </q-btn>
