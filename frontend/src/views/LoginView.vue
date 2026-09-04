@@ -25,7 +25,7 @@ import { useAuthStore } from "@/store/Auth";
 import { useGeneralStore } from "@/store/General";
 import { useNotificar } from "@/composables/useNotificar";
 import { requerido, esEmail, minimo } from "@/utils/reglas";
-import logo from "@/assets/logo.svg";
+import logo from "@/assets/lojo.png";
 
 // Dentro de un componente SI se usa useRouter(); fuera de uno hay que importar
 // la instancia (como hace /plugins/axios.js).
