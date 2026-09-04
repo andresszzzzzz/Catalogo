@@ -186,7 +186,7 @@ function formatoMoneda(valor) {
               </div>
 
               <q-card-section class="col">
-                <div class="text-subtitle1 text-weight-bold">{{ producto.nombre }}</div>
+                <div class="text-subtitle1 text-weight-bold nombre-producto">{{ producto.nombre }}</div>
 
                 <div class="row items-center q-gutter-xs q-mt-xs">
                   <q-badge v-if="producto.categoria?.nombre" color="primary" outline>
@@ -222,16 +222,32 @@ function formatoMoneda(valor) {
 </template>
 
 <style scoped lang="scss">
+@use "@/styles/variables" as *;
+
 .tarjeta-producto {
-  border-radius: 8px;
-  transition: box-shadow 0.15s ease;
+  border-radius: 12px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 
   &:hover {
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
   }
 
   &__sin-imagen {
     height: 160px;
   }
+}
+
+.nombre-producto {
+  font-family: $fuente-display;
+  font-size: 17px;
+  line-height: 1.3;
+}
+
+.precio-producto {
+  font-family: $fuente-display;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--color_button);
 }
 </style>

@@ -155,6 +155,28 @@ const iniciarSesion = async () => {
 </template>
 
 <style scoped lang="scss">
+@use "@/styles/variables" as *;
+
+.columna-login {
+  width: 100%;
+  max-width: 400px;
+}
+
+.columna-login :deep(.tarjeta) {
+  position: relative;
+  overflow: hidden;
+  padding-top: 4px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color_button), color-mix(in srgb, var(--color_button) 60%, white));
+  }
+}
 .columna-login {
   width: 400px;
   max-width: 92vw;

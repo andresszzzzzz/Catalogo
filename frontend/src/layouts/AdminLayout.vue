@@ -79,7 +79,7 @@ const tituloSeccion = computed(() => route.meta?.titulo || "Panel");
     de lado a lado, y la L hace que el menu lateral quede debajo de ella.
   -->
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated class="bg-primary text-white">
+    <q-header elevated class="bg-primary text-white app-header">
       <q-toolbar>
         <q-btn
           flat
@@ -90,7 +90,7 @@ const tituloSeccion = computed(() => route.meta?.titulo || "Panel");
           @click="general.alternarMenu()"
         />
 
-        <q-toolbar-title class="text-weight-bold text-subtitle1">
+        <q-toolbar-title class="text-weight-bold text-subtitle1 app-header__titulo">
           {{ tituloSeccion }}
         </q-toolbar-title>
 
@@ -184,3 +184,17 @@ const tituloSeccion = computed(() => route.meta?.titulo || "Panel");
     </q-page-container>
   </q-layout>
 </template>
+
+<style scoped lang="scss">
+@use "@/styles/variables" as *;
+
+.app-header {
+  background: linear-gradient(120deg, var(--color_button) 0%, color-mix(in srgb, var(--color_button) 78%, black) 100%) !important;
+}
+
+.app-header__titulo {
+  font-family: $fuente-display;
+  font-style: italic;
+  letter-spacing: 0.01em;
+}
+</style>
