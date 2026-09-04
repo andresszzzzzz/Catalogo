@@ -59,7 +59,7 @@ const cargarProductos = async () => {
 
   try {
     const respuesta = await productosService.listar(filtros.value);
-    productos.value = respuesta.data;
+    productos.value = respuesta.data.filter((p) => p.activo !== false);
   } catch (e) {
     error.value = e.mensaje;
     notificarError(e);
