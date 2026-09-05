@@ -13,7 +13,7 @@
  * arma su propio q-layout autonomo con cabecera publica y filtros laterales.
  */
 import { onMounted, ref, watch } from "vue";
-import { useRouter } from "vue-router";
+
 
 import { productosService } from "@/services/productos.service";
 import { categoriasService } from "@/services/categorias.service";
@@ -24,7 +24,6 @@ import logo from "@/assets/lojo.png";
 
 
 
-const router = useRouter();
 const general = useGeneralStore();
 const { notificarError } = useNotificar();
 
@@ -81,7 +80,6 @@ onMounted(() => {
   cargarFiltrosDisponibles();
 });
 
-const irALogin = () => router.push({ name: "login" });
 
 function formatoMoneda(valor) {
   const numero = Number(valor);
@@ -107,8 +105,6 @@ function formatoMoneda(valor) {
           {{ general.titulo }}
         </q-toolbar-title>
 
-        <q-btn unelevated no-caps color="white" text-color="primary" icon="login" label="Iniciar sesion"
-          @click="irALogin" />
       </q-toolbar>
 
       <!-- Buscador: siempre visible bajo la barra, en todos los tamaños. -->
