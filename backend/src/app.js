@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
@@ -22,6 +23,13 @@ function crearApp() {
   app.use(cors());
   app.use(express.json());
   app.use(apiLimiter);
+
+  // Sirve el frontend ya compilado (frontend/dist copiado aqui como backend/public).
+  // Como el router del frontend usa hash (#/...), no hace falta una ruta
+  // "catch-all" para el enrutado del lado del cliente: basta con servir index.html
+  // en "/" y los assets estáticos; el resto lo maneja el JS en el navegador.
+  app.use(express.static(path.join(__dirname, '..', 'public')));
+
   app.use('/api/usuarios', usuarioRoutes);
 
   /**
