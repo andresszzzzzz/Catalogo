@@ -30,6 +30,7 @@ const columnas = [
   { name: "nit", label: "NIT / Identificacion", field: "nit", align: "left", sortable: true },
   { name: "telefono", label: "Telefono", field: "telefono", align: "left" },
   { name: "email", label: "Email", field: "email", align: "left" },
+  { name: "estado", label: "Estado", field: "activo", align: "center" },
   { name: "acciones", label: "Acciones", field: "acciones", align: "right" },
 ];
 
@@ -109,20 +110,30 @@ const guardar = async () => {
   }
 };
 
-// --- Eliminar ----------------------------------------------------------------
-const eliminar = async (proveedor) => {
+// --- Activar / Desactivar -----------------------------------------------------
+const desactivar = async (proveedor) => {
   const aceptado = await confirmar({
-    titulo: "Eliminar proveedor",
-    mensaje: `¿Confirmas eliminar a "${proveedor.nombre}"? Esta accion no se puede deshacer.`,
-    textoOk: "Eliminar",
+    titulo: "Desactivar proveedor",
+    mensaje: `¿Confirmas desactivar a "${proveedor.nombre}"? Dejara de verse en el catalogo.`,
+    textoOk: "Desactivar",
     color: "negative",
   });
 
   if (!aceptado) return;
 
   try {
-    const respuesta = await proveedoresService.eliminar(proveedor._id);
-    notificarOk(respuesta?.msg || "Proveedor eliminado");
+    const respuesta = await proveedoresService.actualizar(proveedor._id, { activo: false });
+    notificarOk(respuesta?.msg || "Proveedor desactivado");
+    await cargar();
+  } catch (e) {
+    notificarError(e);
+  }
+};
+
+const reactivar = async (proveedor) => {
+  try {
+    const respuesta = await proveedoresService.actualizar(proveedor._id, { activo: true });
+    notificarOk(respuesta?.msg || "Proveedor activado");
     await cargar();
   } catch (e) {
     notificarError(e);
@@ -150,15 +161,27 @@ const eliminar = async (proveedor) => {
 
       <TablaDatos :filas="proveedores" :columnas="columnas" :cargando="cargando"
         mensaje-vacio="Aun no hay proveedores registrados">
+        <template #body-cell-estado="celda">
+          <q-td :props="celda" class="text-center">
+            <q-badge :color="celda.row.activo ? 'positive' : 'grey'">
+              {{ celda.row.activo ? "Activo" : "Inactivo" }}
+            </q-badge>
+          </q-td>
+        </template>
+
         <template #body-cell-acciones="celda">
           <q-td :props="celda" class="text-right">
             <q-btn flat dense round size="sm" icon="edit" color="primary" class="action-secondary"
               @click="abrirEdicion(celda.row)">
               <q-tooltip>Editar</q-tooltip>
             </q-btn>
-            <q-btn flat dense round size="sm" icon="delete" color="negative" class="action-secondary"
-              @click="eliminar(celda.row)">
-              <q-tooltip>Eliminar</q-tooltip>
+            <q-btn v-if="celda.row.activo" flat dense round size="sm" icon="block" color="negative"
+              class="action-secondary" @click="desactivar(celda.row)">
+              <q-tooltip>Desactivar</q-tooltip>
+            </q-btn>
+            <q-btn v-else flat dense round size="sm" icon="restore" color="positive" class="action-secondary"
+              @click="reactivar(celda.row)">
+              <q-tooltip>Reactivar</q-tooltip>
             </q-btn>
           </q-td>
         </template>
